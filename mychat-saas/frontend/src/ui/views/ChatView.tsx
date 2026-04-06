@@ -133,6 +133,11 @@ export function ChatView() {
       setError("Voice input is not supported in this browser. Use Chrome or Edge.");
       return;
     }
+    const isSecureContext = window.location.protocol === "https:" || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    if (!isSecureContext) {
+      setError("Microphone requires HTTPS or localhost. Use HTTPS in production or http://localhost:5000");
+      return;
+    }
     const SpeechRecognitionCtor = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     const rec = new SpeechRecognitionCtor();
     rec.continuous = false;
@@ -144,9 +149,11 @@ export function ChatView() {
       setListening(false);
       const err = e?.error;
       if (err === "not-allowed" || err === "permission-denied") {
-        setError("Microphone access denied. Allow mic permissions in your browser.");
+        setError("Microphone permission denied. Click the lock icon and allow microphone access.");
+      } else if (err === "network") {
+        setError("Network error. Check your internet connection.");
       } else {
-        setError("Voice input failed. Try again or type.");
+        setError(`Voice input error: ${err || "Unknown"}. Try typing instead.`);
       }
     };
     rec.onresult = (ev: any) => {
@@ -160,7 +167,12 @@ export function ChatView() {
         rec.stop();
       }
     };
-    rec.start();
+    try {
+      rec.start();
+    } catch (err) {
+      setListening(false);
+      setError("Could not start voice input. Check browser permissions.");
+    }
   }
 
   function speak(text: string) {
