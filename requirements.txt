@@ -1,0 +1,31 @@
+# Voice Assistant Requirements
+# Install with: pip install -r requirements.txt
+
+# Web UI
+flask>=2.3.0
+
+# Speech Recognition
+SpeechRecognition==3.10.0
+
+# Text-to-Speech
+pyttsx3==2.90
+
+# HTTP requests for AI APIs
+requests==2.31.0
+
+# Web scraping for fallback answers
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Google Gemini (recommended for reliable AI responses)
+google-generativeai>=0.8.0
+google-genai>=1.0.0
+
+# Additional dependencies for speech recognition
+PyAudio==0.2.11
+
+# Optional: For better audio processing
+pyaudio==0.2.11
+
+# For type hints (if using older Python versions)
+typing-extensions==4.8.0

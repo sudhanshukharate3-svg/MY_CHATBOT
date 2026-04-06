@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MYCHAT APP - Professional AI Voice Assistant">
+  <title>MYCHAT APP - Master UI</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="/static/css/master.css">
+</head>
+<body>
+  <div class="master-app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="app-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 1 3 3v8a3 3 0 0 1-6 0V4a3 3 0 0 1 3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/>
+          </svg>
+        </div>
+        <h1>MYCHAT</h1>
+      </div>
+
+      <!-- Quick Actions -->
+      <nav class="quick-actions">
+        <button class="nav-btn active" data-view="chat" title="Chat View">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>Chat</span>
+        </button>
+        <button class="nav-btn" data-view="history" title="Chat History">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <span>History</span>
+        </button>
+        <button class="nav-btn" data-view="settings" title="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"/>
+          </svg>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <!-- Chat History List -->
+      <div class="history-container">
+        <div class="history-header">
+          <h3>Recent Chats</h3>
+          <button class="history-clear" id="clearHistoryBtn" title="Clear all history">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+          </button>
+        </div>
+        <div class="history-list" id="historyList">
+          <p class="empty-state">No chats yet. Start talking!</p>
+        </div>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <button class="theme-toggle" id="themeToggle" title="Toggle dark/light theme">
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <h2 id="viewTitle">Chat with AI</h2>
+          <p id="viewSubtitle">Voice & Text Assistant</p>
+        </div>
+        <div class="header-right">
+          <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span id="statusText">Ready</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Views Container -->
+      <div class="views-container">
+        <!-- Chat View -->
+        <section class="view active" id="chatView">
+          <!-- Chat Display -->
+          <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+              <div class="welcome-message">
+                <div class="welcome-icon">🎤</div>
+                <h3>Welcome to MYCHAT</h3>
+                <p>Your personal AI voice assistant</p>
+                <div class="welcome-features">
+                  <div class="feature">
+                    <span class="feature-icon">🎙️</span>
+                    <span>Voice input</span>
+                  </div>
+                  <div class="feature">
+                    <span class="feature-icon">⌨️</span>
+                    <span>Text input</span>
+                  </div>
+                  <div class="feature">
+                    <span class="feature-icon">🔊</span>
+                    <span>Voice output</span>
+                  </div>
+                  <div class="feature">
+                    <span class="feature-icon">⚡</span>
+                    <span>Fast responses</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-section">
+              <!-- Voice Visualizer -->
+              <div class="voice-visualizer" id="voiceVisualizer">
+                <canvas id="visualizerCanvas"></canvas>
+              </div>
+
+              <!-- Input Controls -->
+              <div class="input-controls">
+                <button class="control-btn voice-btn" id="voiceBtn" title="Voice input">
+                  <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 1a3 3 0 0 1 3 3v8a3 3 0 0 1-6 0V4a3 3 0 0 1 3-3z"/>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/>
+                  </svg>
+                </button>
+
+                <div class="text-input-wrapper">
+                  <input 
+                    type="text" 
+                    id="textInput" 
+                    class="text-input" 
+                    placeholder="Type or speak your question..."
+                    autocomplete="off"
+                  >
+                  <button class="clear-btn" id="clearBtn" title="Clear input">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"/>
+                      <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <button class="control-btn send-btn" id="sendBtn" title="Send message">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Status Messages -->
+              <div class="status-messages">
+                <p id="voiceStatus" class="status"></p>
+                <p id="inputHint" class="hint">💡 Tip: Click mic or type to start</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- History View -->
+        <section class="view" id="historyView">
+          <div class="history-panel">
+            <h3>Chat History</h3>
+            <div class="history-grid" id="historyGrid">
+              <p class="empty-state">No chat history yet</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Settings View -->
+        <section class="view" id="settingsView">
+          <div class="settings-panel">
+            <h3>Settings & Configuration</h3>
+            
+            <!-- Voice Settings -->
+            <div class="settings-group">
+              <h4>Voice Settings</h4>
+              <div class="setting-item">
+                <label>Voice Speed</label>
+                <div class="slider-container">
+                  <input type="range" id="voiceSpeed" min="0.5" max="2" step="0.1" value="1" class="slider">
+                  <span id="speedValue">1.0x</span>
+                </div>
+              </div>
+              <div class="setting-item">
+                <label>Voice Pitch</label>
+                <div class="slider-container">
+                  <input type="range" id="voicePitch" min="0.5" max="2" step="0.1" value="1" class="slider">
+                  <span id="pitchValue">1.0</span>
+                </div>
+              </div>
+              <div class="setting-item checkbox">
+                <input type="checkbox" id="autoSpeak" checked>
+                <label for="autoSpeak">Auto-speak responses</label>
+              </div>
+            </div>
+
+            <!-- AI Settings -->
+            <div class="settings-group">
+              <h4>AI Provider</h4>
+              <div class="setting-item">
+                <select id="aiProvider" class="select-input">
+                  <option value="simple">Built-in (No API needed)</option>
+                  <option value="google">Google Gemini</option>
+                  <option value="openai">OpenAI</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Display Settings -->
+            <div class="settings-group">
+              <h4>Display</h4>
+              <div class="setting-item checkbox">
+                <input type="checkbox" id="showTimestamps" checked>
+                <label for="showTimestamps">Show message timestamps</label>
+              </div>
+              <div class="setting-item checkbox">
+                <input type="checkbox" id="compactMode">
+                <label for="compactMode">Compact message view</label>
+              </div>
+              <div class="setting-item checkbox">
+                <input type="checkbox" id="soundNotifications">
+                <label for="soundNotifications">Sound notifications</label>
+              </div>
+            </div>
+
+            <!-- Cache Settings -->
+            <div class="settings-group">
+              <h4>Performance</h4>
+              <div class="setting-item">
+                <label>Cache Status:</label>
+                <div class="cache-stats">
+                  <p id="cacheInfo">Cache: 0 items, 0% hit rate</p>
+                </div>
+              </div>
+              <button class="btn btn-secondary" id="clearCacheBtn">Clear Cache</button>
+              <button class="btn btn-secondary" id="clearHistoryBtn">Clear History</button>
+            </div>
+
+            <!-- About -->
+            <div class="settings-group">
+              <h4>About</h4>
+              <p>MYCHAT APP v2.0</p>
+              <p>Master Level UI Edition</p>
+              <p style="color: var(--text-muted); font-size: 0.875rem;">
+                Professional AI voice assistant with advanced features
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="/static/js/master-app.js"></script>
+</body>
+</html>

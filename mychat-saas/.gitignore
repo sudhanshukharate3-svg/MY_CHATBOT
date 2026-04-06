@@ -1,0 +1,12 @@
+.env
+**/.env
+**/node_modules
+**/dist
+**/.DS_Store
+**/.vite
+**/.turbo
+**/.next
+**/coverage
+
+mongo_data
+
