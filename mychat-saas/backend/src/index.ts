@@ -11,6 +11,7 @@ import { sessionsRouter } from "./routes/sessions.js";
 import { requireAuth } from "./middleware/auth.js";
 import { notFound, errorHandler } from "./middleware/error.js";
 import { OpenAiProvider } from "./services/llm/openaiProvider.js";
+import { MockProvider } from "./services/llm/mockProvider.js";
 import { initSocket } from "./socket.js";
 
 const env = loadEnv();
@@ -56,12 +57,16 @@ async function main() {
   app.use(notFound);
   app.use(errorHandler);
 
+  // Use MockProvider for testing/demo, OpenAI for production
+  let llm;
   if (!env.OPENAI_API_KEY) {
-    // In production you should fail hard, but leaving this as a readable startup error.
-    console.warn("OPENAI_API_KEY is missing. Chat will not generate AI responses.");
+    console.log("✨ OPENAI_API_KEY not set. Using MOCK provider for instant responses (demo mode)");
+    console.log("📝 To use real AI: Set OPENAI_API_KEY in .env file");
+    llm = new MockProvider();
+  } else {
+    console.log("🔑 Using OpenAI API provider");
+    llm = new OpenAiProvider(env.OPENAI_API_KEY, env.OPENAI_MODEL);
   }
-
-  const llm = new OpenAiProvider(env.OPENAI_API_KEY ?? "", env.OPENAI_MODEL);
   initSocket({
     httpServer: server,
     webOrigin: env.WEB_ORIGIN,
