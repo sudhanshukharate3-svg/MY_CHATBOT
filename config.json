@@ -1,0 +1,10 @@
+{
+  "openai_api_key": "",
+  "google_api_key": "AIzaSyCKDA0UQ8lxsy_7pJvhB1xLb53Eu7hJ76g",
+  "google_search_api_key": "",
+  "google_search_engine_id": "",
+  "ai_provider": "google_search",
+  "openai_model": "gpt-3.5-turbo",
+  "google_model": "gemini-1.5-flash",
+  "note": "Set ai_provider to: 'google_search' (free, fetches from Google), 'openai' (requires API key), or 'google' (requires billing). Google Search is recommended as the primary provider with auto-fallback to simple responses."
+}
