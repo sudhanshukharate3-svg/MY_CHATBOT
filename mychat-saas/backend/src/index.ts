@@ -12,6 +12,7 @@ import { requireAuth } from "./middleware/auth.js";
 import { notFound, errorHandler } from "./middleware/error.js";
 import { OpenAiProvider } from "./services/llm/openaiProvider.js";
 import { MockProvider } from "./services/llm/mockProvider.js";
+import { FlaskProvider } from "./services/llm/flaskProvider.js";
 import { initSocket } from "./socket.js";
 
 const env = loadEnv();
@@ -57,15 +58,23 @@ async function main() {
   app.use(notFound);
   app.use(errorHandler);
 
-  // Use MockProvider for testing/demo, OpenAI for production
+  // Initialize LLM Provider based on configuration
   let llm;
-  if (!env.OPENAI_API_KEY) {
-    console.log("✨ OPENAI_API_KEY not set. Using MOCK provider for instant responses (demo mode)");
-    console.log("📝 To use real AI: Set OPENAI_API_KEY in .env file");
-    llm = new MockProvider();
-  } else {
+  
+  // Priority: Flask > OpenAI > Mock
+  let isFlaskEnabled = false;
+  if (env.FLASK_API_URL) {
+    console.log(`🐍 Initializing Flask provider at ${env.FLASK_API_URL}`);
+    llm = new FlaskProvider(env.FLASK_API_URL);
+    isFlaskEnabled = true;
+  } else if (env.OPENAI_API_KEY) {
     console.log("🔑 Using OpenAI API provider");
     llm = new OpenAiProvider(env.OPENAI_API_KEY, env.OPENAI_MODEL);
+  } else {
+    console.log("✨ OPENAI_API_KEY not set. Using MOCK provider for instant responses (demo mode)");
+    console.log("📝 To use real AI: Set OPENAI_API_KEY in .env file");
+    console.log("🐍 To use Flask: Set FLASK_API_URL in .env file (default: http://localhost:5000)");
+    llm = new MockProvider();
   }
   initSocket({
     httpServer: server,

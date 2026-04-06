@@ -9,6 +9,7 @@ Then open http://127.0.0.1:5000 in your browser.
 import os
 import logging
 from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
 from voice_assistant import VoiceAssistant
 
 # Configure logging
@@ -16,6 +17,16 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__, static_folder="static")
+
+# Enable CORS for all routes (needed for Node.js backend to call this API)
+CORS(app, resources={
+    r"/api/*": {
+        "origins": ["http://localhost:3000", "http://localhost:5173", "127.0.0.1"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
+
 # Assistant without mic/TTS for API-only use
 assistant = VoiceAssistant(use_voice=False)
 

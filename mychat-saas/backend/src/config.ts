@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const envSchema = z.object({
   NODE_ENV: z.string().default("development"),
-  PORT: z.coerce.number().default(8080),
+  PORT: z.coerce.number().default(3000),
   WEB_ORIGIN: z.string().default("http://localhost:5173"),
   MONGODB_URI: z.string(),
   JWT_ACCESS_SECRET: z.string().min(16),
@@ -11,6 +11,7 @@ const envSchema = z.object({
   JWT_REFRESH_TTL: z.string().default("30d"),
   OPENAI_API_KEY: z.string().optional(),
   OPENAI_MODEL: z.string().default("gpt-4o-mini"),
+  FLASK_API_URL: z.string().default("http://localhost:5000"),
   RATE_LIMIT_WINDOW_MS: z.coerce.number().default(60_000),
   RATE_LIMIT_MAX: z.coerce.number().default(60),
 });
