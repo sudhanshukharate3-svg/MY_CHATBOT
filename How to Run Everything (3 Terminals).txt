@@ -1,0 +1,19 @@
+How to Run Everything (3 Terminals)
+Terminal 1: Flask (Python) - Port 5000
+# First time setup
+pip install -r requirements.txt
+
+# Then run
+python app_web.py
+
+
+Terminal 2: Node.js Backend - Port 3000
+cd mychat-saas/backend
+npm install  # First time only
+npm run dev
+
+
+Terminal 3: React Frontend - Port 5173
+cd mychat-saas/frontend
+npm install --legacy-peer-deps  # First time only
+npm run dev

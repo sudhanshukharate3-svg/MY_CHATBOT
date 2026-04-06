@@ -45,9 +45,19 @@ function Shell() {
   );
 
   return (
-    <div className="min-h-dvh bg-zinc-50 text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50">
-      {header}
-      <main className="mx-auto max-w-6xl px-4 py-6">{user ? <ChatView /> : <LoginView />}</main>
+    <div className="h-dvh bg-black text-zinc-50 dark:bg-black dark:text-zinc-50">
+      {user ? (
+        // ChatView takes full screen when logged in
+        <ChatView />
+      ) : (
+        // LoginView with header when not logged in
+        <>
+          {header}
+          <main className="mx-auto max-w-6xl px-4 py-6">
+            <LoginView />
+          </main>
+        </>
+      )}
     </div>
   );
 }
