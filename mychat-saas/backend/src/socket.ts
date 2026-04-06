@@ -42,55 +42,73 @@ export function initSocket(opts: {
     socket.on(
       "chat:message",
       async (payload: { sessionId: string; text: string; clientMessageId?: string }) => {
-        const { sessionId, text, clientMessageId } = payload;
-        const cleaned = String(text ?? "").replace(/\0/g, "").trim();
-        if (!cleaned) return;
-        if (cleaned.length > 4000) {
-          return socket.emit("chat:error", { message: "Message too long (max 4000 chars).", clientMessageId });
+        try {
+          const { sessionId, text, clientMessageId } = payload;
+          const cleaned = String(text ?? "").replace(/\0/g, "").trim();
+          if (!cleaned) return;
+          if (cleaned.length > 4000) {
+            return socket.emit("chat:error", { message: "Message too long (max 4000 chars).", clientMessageId });
+          }
+          const session = await ChatSession.findOne({ _id: sessionId, userId: user.sub });
+          if (!session) return socket.emit("chat:error", { message: "Session not found", clientMessageId });
+
+          const userMsg = await Message.create({
+            sessionId,
+            userId: user.sub,
+            role: "user",
+            content: cleaned,
+          });
+
+          io.to(`session:${sessionId}`).emit("chat:message:created", {
+            message: userMsg,
+            clientMessageId,
+          });
+
+          io.to(`session:${sessionId}`).emit("chat:typing", { sessionId, isTyping: true });
+
+          try {
+            const context = await getRecentContext(sessionId, 30);
+            const system = {
+              role: "system" as const,
+              content:
+                "You are MYCHAT APP, a production-grade assistant. " +
+                "Be accurate, context-aware, and concise. Use markdown for code and lists. " +
+                "If you are unsure, ask a clarifying question.",
+            };
+
+            const llmResp = await opts.llm.generate([system, ...context, { role: "user", content: cleaned }]);
+
+            if (!llmResp.text) {
+              throw new Error("Empty response from LLM");
+            }
+
+            const botMsg = await Message.create({
+              sessionId,
+              userId: user.sub,
+              role: "assistant",
+              content: llmResp.text,
+            });
+
+            session.lastMessageAt = new Date();
+            if (session.title === "New chat") {
+              session.title = text.slice(0, 48);
+            }
+            await session.save();
+
+            io.to(`session:${sessionId}`).emit("chat:typing", { sessionId, isTyping: false });
+            io.to(`session:${sessionId}`).emit("chat:message:created", { message: botMsg });
+          } catch (llmError) {
+            console.error("LLM Error:", llmError);
+            io.to(`session:${sessionId}`).emit("chat:typing", { sessionId, isTyping: false });
+            io.to(`session:${sessionId}`).emit("chat:error", {
+              message: `Failed to generate response: ${llmError instanceof Error ? llmError.message : "Unknown error"}`,
+              clientMessageId,
+            });
+          }
+        } catch (error) {
+          console.error("Chat message error:", error);
+          socket.emit("chat:error", { message: "An error occurred while processing your message" });
         }
-        const session = await ChatSession.findOne({ _id: sessionId, userId: user.sub });
-        if (!session) return socket.emit("chat:error", { message: "Session not found", clientMessageId });
-
-        const userMsg = await Message.create({
-          sessionId,
-          userId: user.sub,
-          role: "user",
-          content: cleaned,
-        });
-
-        io.to(`session:${sessionId}`).emit("chat:message:created", {
-          message: userMsg,
-          clientMessageId,
-        });
-
-        io.to(`session:${sessionId}`).emit("chat:typing", { sessionId, isTyping: true });
-
-        const context = await getRecentContext(sessionId, 30);
-        const system = {
-          role: "system" as const,
-          content:
-            "You are MYCHAT APP, a production-grade assistant. " +
-            "Be accurate, context-aware, and concise. Use markdown for code and lists. " +
-            "If you are unsure, ask a clarifying question.",
-        };
-
-        const llmResp = await opts.llm.generate([system, ...context, { role: "user", content: cleaned }]);
-
-        const botMsg = await Message.create({
-          sessionId,
-          userId: user.sub,
-          role: "assistant",
-          content: llmResp.text,
-        });
-
-        session.lastMessageAt = new Date();
-        if (session.title === "New chat") {
-          session.title = text.slice(0, 48);
-        }
-        await session.save();
-
-        io.to(`session:${sessionId}`).emit("chat:typing", { sessionId, isTyping: false });
-        io.to(`session:${sessionId}`).emit("chat:message:created", { message: botMsg });
       }
     );
   });

@@ -188,8 +188,9 @@ export function ChatView() {
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
-      <aside className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="flex h-screen flex-col gap-4 lg:flex-row lg:gap-4">
+      {/* Sidebar - hidden on mobile, 320px on desktop */}
+      <aside className="hidden rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 lg:flex lg:w-80 lg:flex-col">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-sm font-semibold">{user?.name}</div>
@@ -250,7 +251,7 @@ export function ChatView() {
         </div>
       </aside>
 
-      <section className="flex min-h-[70vh] flex-col rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <section className="flex flex-1 flex-col rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
         <div ref={listRef} className="flex-1 space-y-4 overflow-y-auto p-4">
           {messages.length === 0 && (
             <div className="rounded-2xl border border-dashed border-zinc-200 p-6 text-sm text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
